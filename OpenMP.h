@@ -80,6 +80,21 @@ void cal_max() {
     // The max found by your OpenMap should be identical to the max found by stl
     
     // your code goes here
+ #pragma omp parallel num_threads(num_threads)
+    {
+        int local_max = 0;  // Initialize local_max for each thread
+        #pragma omp for
+        for (int i = 0; i < data_size; ++i) {
+            if (data[i] > local_max) {
+                #pragma omp critical
+                {
+                    if (data[i] > max) {
+                        max = data[i];
+                    }
+                }
+            }
+        }
+    }
 
     // OpenMP implementation: stop here
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
